@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical School Registration Form</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: rgb(239, 222, 197);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 150vh;
+            margin: 0;
+        }
+        .container {
+            width: 500px;
+            padding: 30px;
+            border: 1px solid rgb(239, 235, 224);
+            border-radius: 10px;
+            margin: 50px;
+        }
+        form {
+            padding: 20px;
+            width: 15cm;
+            margin: auto;
+            box-shadow: 0px 0px 10px grey;
+            border-radius: 10px;
+            background-color: rgb(243, 255, 251);
+        }
+        h1 {
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin: 5px 0 2px;
+        }
+        input, select {
+            width: calc(100% - 22px);
+            padding: 8px;
+            margin: 5px 0 15px;
+            border: 1px solid;
+            border-radius: 5px;
+        }
+        input[type="radio"] {
+            width: auto;
+            margin-right: 5px;
+        }
+        .error {
+            color: red;
+            font-size: 0.9em;
+        }
+        .success {
+            color: green;
+            font-size: 1em;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form id="registrationForm">
+            <h1>TECHNICAL SCHOOL REGISTRATION FORM</h1>
+
+            <label for="firstname">First Name:</label>
+            <input type="text" id="firstname" name="firstname" placeholder="Enter first name" required>
+            <span class="error" id="firstnameError"></span>
+
+            <label for="middlename">Middle Name:</label>
+            <input type="text" id="middlename" name="middlename" placeholder="Enter middle name">
+            <span class="error" id="middlenameError"></span>
+
+            <label for="lastname">Last Name:</label>
+            <input type="text" id="lastname" name="lastname" placeholder="Enter last name" required>
+            <span class="error" id="lastnameError"></span>
+
+            <label for="age">Age:</label>
+            <input type="number" id="age" name="age" placeholder="Enter age" required>
+            <span class="error" id="ageError"></span>
+
+            <label>Gender:</label>
+            <label for="male">Male</label>
+            <input type="radio" id="male" name="gender" value="male" required>
+            <label for="female">Female</label>
+            <input type="radio" id="female" name="gender" value="female" required>
+            <label for="other">Other</label>
+            <input type="radio" id="other" name="gender" value="other" required>
+            <span class="error" id="genderError"></span>
+
+            <label for="country">Country:</label>
+            <select id="country" name="country" required>
+                <option value="" disabled selected>Select your country</option>
+                <option value="Tanzania">Tanzania</option>
+                <option value="Kenya">Kenya</option>
+                <option value="Uganda">Uganda</option>
+            </select>
+            <span class="error" id="countryError"></span>
+
+            <label for="phonenumber">Phone Number:</label>
+            <input type="text" id="phonenumber" name="phonenumber" placeholder="e.g., +255123456789" required>
+            <span class="error" id="phonenumberError"></span>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="someone345@gmail.com" required>
+            <span class="error" id="emailError"></span>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" placeholder="Enter password" required>
+            <span class="error" id="passwordError"></span>
+
+            <input type="submit" value="Submit">
+            <p class="success" id="successMessage"></p>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.getElementById("registrationForm");
+            const countrySelect = document.getElementById("country");
+            const phoneInput = document.getElementById("phonenumber");
+            const successMessage = document.getElementById("successMessage");
+
+            const countryCodes = {
+                "Tanzania": "+255",
+                "Kenya": "+254",
+                "Uganda": "+256"
+            };
+
+            countrySelect.addEventListener("change", function() {
+                phoneInput.value = countryCodes[this.value] || "";
+            });
+
+            form.addEventListener("submit", function(event) {
+                event.preventDefault();
+                let valid = true;
+
+                // Clear previous error messages
+                document.querySelectorAll(".error").forEach(error => error.textContent = "");
+
+                // First Name validation
+                const firstName = document.getElementById("firstname").value.trim();
+                if (firstName === "") {
+                    document.getElementById("firstnameError").textContent = "First name is required!";
+                    valid = false;
+                }
+
+                // Last Name validation
+                const lastName = document.getElementById("lastname").value.trim();
+                if (lastName === "") {
+                    document.getElementById("lastnameError").textContent = "Last name is required!";
+                    valid = false;
+                }
+
+                // Age validation
+                const age = parseInt(document.getElementById("age").value, 10);
+                if (isNaN(age) || age <= 0) {
+                    document.getElementById("ageError").textContent = "Please enter a valid positive age!";
+                    valid = false;
+                }
+
+                // Gender validation
+                const genderSelected = document.querySelector("input[name='gender']:checked");
+                if (!genderSelected) {
+                    document.getElementById("genderError").textContent = "Please select a gender!";
+                    valid = false;
+                }
+
+                // Country validation
+                if (countrySelect.value === "") {
+                    document.getElementById("countryError").textContent = "Please select a country!";
+                    valid = false;
+                }
+
+                // Phone Number validation
+                const phoneNumber = phoneInput.value.trim();
+                const phonePattern = /^\+\d{12}$/; 
+                if (!phonePattern.test(phoneNumber)) {
+                    document.getElementById("phonenumberError").textContent = "Phone number must be 12 digits long, including the country code!";
+                    valid = false;
+                }
+
+                // Email validation
+                const email = document.getElementById("email").value.trim();
+                const emailPattern = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+                if (!emailPattern.test(email)) {
+                    document.getElementById("emailError").textContent = "Please enter a valid Gmail address!";
+                    valid = false;
+                }
+
+                // Password validation
+                const password = document.getElementById("password").value;
+                if (password.length < 6) {
+                    document.getElementById("passwordError").textContent = "Password must be at least 6 characters long!";
+                    valid = false;
+                }
+
+                if (valid) {
+                    successMessage.textContent = "Credentials are correct. Form submitted successfully!";
+                    successMessage.style.color = "green";
+
+                    setTimeout(() => {
+                        successMessage.textContent = "";
+                    }, 3000);
+
+                    form.reset(); 
+                }
+            });
+        });
+    </script>
+</body>
+</html>
